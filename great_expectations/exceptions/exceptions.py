@@ -505,3 +505,27 @@ class RedshiftExecutionEngineError(GreatExpectationsError):
 class InvalidSetTypeError(GreatExpectationsError):
     def __init__(self, expected_type: str, actual_type: str) -> None:
         super().__init__(f"Expected a set[{expected_type}], got an element of type {actual_type}")
+
+
+class SuiteVersionError(GreatExpectationsError):
+    """Base class for Expectation Suite versioning and migration errors."""
+
+
+class SuiteVersionCorruptError(SuiteVersionError):
+    """A persisted version record cannot be parsed or fails its integrity check.
+
+    The corrupt record is never overwritten as part of raising; callers must repair or
+    explicitly remove it, so an older intact version remains available.
+    """
+
+
+class SuiteVersionConflictError(SuiteVersionError):
+    """A concurrent writer committed a newer version than the operation was based on."""
+
+
+class SuiteMigrationError(SuiteVersionError):
+    """A migration cannot be applied or would produce an incompatible Expectation Suite."""
+
+
+class SuiteVersionNotFoundError(SuiteVersionError):
+    """The requested suite version does not exist in the version store."""

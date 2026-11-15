@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from typing import Any, Callable, TypeVar
 
 try:
@@ -17,4 +18,13 @@ except ImportError:
         return __arg
 
 
-__all__ = ["Annotated", "override"]
+# ``typing.Self`` was added in Python 3.11. On older interpreters typing_extensions (a declared
+# runtime dependency of this project) provides it; the version check keeps static type checkers
+# from seeing two conflicting definitions of the name.
+if sys.version_info >= (3, 11):
+    from typing import Self
+else:
+    from typing_extensions import Self
+
+
+__all__ = ["Annotated", "Self", "override"]
